@@ -1,0 +1,31 @@
+{% load staticfiles %}<!DOCTYPE html>
+<html lang="en" class="no-js">
+  <head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <script>
+      var decentBrowser = ('querySelector' in document
+          && 'localStorage' in window
+          && 'addEventListener' in window);
+      if (decentBrowser) {
+        document.documentElement.className =
+          document.documentElement.className.replace(/(^|\s)no-js(\s|$)/, '$1js$2');
+      }
+    </script>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Project Base</title>
+    <!--[if gte IE 9]> -->
+    <link href="{% static 'styles/app.css' %}" rel="stylesheet">
+    <!-- <![endif]-->
+    <!--[if lt IE 9]>
+    <link href="{% static 'styles/app.ie8.css' %}" rel="stylesheet">
+    <script src="{% static 'scripts/html5shiv.js' %}"></script>
+    <![endif]-->
+  </head>
+  <body>
+    {% block body %}{% endblock %}
+    {# Hack which prevents subsequent script from executing in older browsers #}
+    <script> if (decentBrowser === false) document.write("<script>/*"); </script>
+    <script src="{% static 'scripts/app.js' %}">//*/</script>
+  </body>
+</html>

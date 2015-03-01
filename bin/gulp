@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+if ! which node > /dev/null; then
+  echo "Executable 'node' not found: you need to install Node.js" 1>&2
+  exit 1
+fi
+
+project_dir="$(unset CDPATH && cd "$( dirname "${BASH_SOURCE[0]}" )/.." && pwd )"
+export STATIC_SRC_DIR="$project_dir/static"
+export STATIC_DEST_DIR="$project_dir/data/static_build"
+cd "$project_dir/build_tools"
+exec ./node_modules/.bin/gulp "$@"

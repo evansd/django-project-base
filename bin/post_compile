@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+
+# Compiles static assets ready for deployment
+# Run as part of the Heroku build process
+
+set -eo pipefail
+
+# Pretty printing functions
+[ $(uname) == "Darwin" ] && SED_FLAG='-l' || SED_FLAG='-u'
+
+indent() {
+  RE="s/^/       /"
+  sed $SED_FLAG "$RE"
+}
+
+function puts-step (){
+  echo "-----> $@"
+}
+
+source bin/install_node_on_heroku "0.12.0"
+puts-step "Compiling and minifying static files"
+bin/build_static_assets 2>&1 | indent

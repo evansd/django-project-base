@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+set -eo pipefail
+project_dir="$( unset CDPATH && cd "$( dirname "${BASH_SOURCE[0]}" )/.." && pwd )"
+echo '===================================================='
+echo 'bin/gulp clean_and_build'
+echo '===================================================='
+echo
+GULP_MINIFY=true GULP_SOURCEMAPS=false \
+  "$project_dir/bin/gulp" clean_and_build
+echo
+echo '===================================================='
+echo './manage.py collectstatic --noinput'
+echo '===================================================='
+echo
+mkdir -p "$project_dir/data/static_root"
+python "$project_dir/manage.py" collectstatic --noinput

@@ -1,0 +1,10 @@
+[core]
+	repositoryformatversion = 0
+	filemode = true
+	bare = false
+	logallrefupdates = true
+[remote "heroku"]
+	url = git@heroku.personal:lit-temple-4972.git
+	fetch = +refs/heads/*:refs/remotes/heroku/*
+[heroku]
+	account = personal

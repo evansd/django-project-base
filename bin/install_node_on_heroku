@@ -1,0 +1,57 @@
+#!/usr/bin/env bash
+
+# Installs the requested version of node on Heroku
+# Example: source install_node_on_heroku '0.10.15'
+# For use as part of a post_compile step
+
+set -eo pipefail
+
+# Pretty printing functions
+[ $(uname) == "Darwin" ] && SED_FLAG='-l' || SED_FLAG='-u'
+
+indent() {
+  RE="s/^/       /"
+  sed $SED_FLAG "$RE"
+}
+
+function puts-step (){
+  echo "-----> $@"
+}
+
+node_version="$1"
+if [ -z "$node_version" ]; then
+  puts-step "No node verson specified, skipping"
+  exit
+fi
+
+node_dir="$BUILD_DIR/.heroku/node"
+node_version_file="$node_dir/node-version.txt"
+# Check existing installed version and remove if necessary
+puts-step "Checking for Node version $node_version"
+skip_install=false
+if [ -f "$node_version_file" ]; then
+  if [ ! $(cat "$node_version_file") = $node_version ]; then
+    puts-step "Found Node version $(cat "$node_version_file"), removing."
+    rm -fr "$node_dir"
+  else
+    skip_install=true
+  fi
+fi
+
+if ! $skip_install; then
+  # Grab Heroku's bundled node
+  puts-step "Installing Node version $node_version"
+  mkdir -p "$node_dir"
+  package_url="http://s3pository.heroku.com/node/v${node_version}/node-v${node_version}-linux-x64.tar.gz"
+  curl "$package_url" -s -o - | tar xzf - -C "$node_dir" --strip=1
+  echo "Testing: $node_dir/bin/node --version" | indent
+  "$node_dir/bin/node" --version | indent
+  # Record node version for future reference
+  echo "$node_version" > "$node_version_file"
+fi
+
+# Add node/bin to path for future sessions
+profile_file="$BUILD_DIR/.profile.d/node.sh"
+mkdir -p $(dirname "$profile_file")
+echo 'export PATH="$HOME/.heroku/node/bin:$PATH"' > "$profile_file"
+export PATH="$node_dir/bin:$PATH"

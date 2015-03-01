@@ -1,0 +1,12 @@
+/*
+ * This stylesheet will be loaded by Internet Explorer 8 and below instead of the
+ * main stylesheet, using conditional comments.
+ *
+ * Any files of the form `*.ie8.less` get processed to remove all media queries,
+ * leaving only styles that apply to the desktop.
+ */
+
+// Include all the main application styles
+@import "app.less";
+
+// Add any IE8 specific styles below
